@@ -1,0 +1,68 @@
+[
+  {
+    "itemId": 1,
+    "itemName": "Falafel Wrap",
+    "itemDescription": "A delicious wrap filled with freshly made falafel, vegetables, and tahini sauce.",
+    "itemOption": "Entree",
+    "itemPrice": 15.5,
+    "IsVegan": true,
+    "IsRegular": false,
+    "IsNonGluten": false,
+    "IsHalal": false
+  },
+  {
+    "itemId": 2,
+    "itemName": "Lamb Shawarma",
+    "itemDescription": "Tender slices of marinated lamb, wrapped in a pita with veggies and sauce.",
+    "IsHalal": true,
+    "IsVegan": true,
+    "IsRegular": false,
+    "IsNonGluten": false,
+    "itemOption": "Entree",
+    "itemPrice": 25.5
+  },
+  {
+    "itemId": 3,
+    "itemName": "Quinoa Salad",
+    "itemDescription": "A refreshing salad with quinoa, mixed greens, and a variety of fresh vegetables.",
+    "IsNonGluten": true,
+    "IsVegan": true,
+    "IsRegular": false,
+    "IsHalal": false,
+    "itemOption": "Appetizer",
+    "itemPrice": 30.5
+  },
+  {
+    "itemId": 4,
+    "itemName": "Cheeseburger",
+    "itemDescription": "A classic cheeseburger with all the fixings on a toasted bun.",
+    "IsRegular": true,
+    "IsVegan": true,
+    "IsNonGluten": false,
+    "IsHalal": false,
+    "itemOption": "Entree",
+    "itemPrice": 10.5
+  },
+  {
+    "itemId": 5,
+    "itemName": "Mango Smoothie",
+    "itemDescription": "A creamy smoothie made with ripe mangoes and a hint of coconut.",
+    "IsVegan": true,
+    "IsRegular": false,
+    "IsNonGluten": false,
+    "IsHalal": false,
+    "itemOption": "Drink",
+    "itemPrice": 5.5
+  },
+  {
+    "itemId": 6,
+    "itemName": "Chocolate Cake",
+    "itemDescription": "Rich and moist chocolate cake with a velvety chocolate ganache.",
+    "IsRegular": true,
+    "IsVegan": true,
+    "IsNonGluten": false,
+    "IsHalal": false,
+    "itemOption": "Dessert",
+    "itemPrice": 20.5
+  }
+]

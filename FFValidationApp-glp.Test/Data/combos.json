@@ -1,0 +1,16 @@
+[
+    {
+        "comboId": 1,
+        "MenuItemId": [
+            1,
+            5
+        ]
+    },
+    {
+        "comboId": 2,
+        "MenuItemId": [
+            4,
+            6
+        ]
+    }
+]
