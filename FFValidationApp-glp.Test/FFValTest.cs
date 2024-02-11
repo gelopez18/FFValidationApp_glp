@@ -2,31 +2,29 @@ using FFValidationApp_glp.Controller.Rules;
 using FFValidationApp_glp.Models;
 using NRules;
 using NRules.Fluent;
+using Xunit.Abstractions;
 
 namespace FFValidationApp_glp.Test
 {
     public class FFValTest
     {
         [Fact]
-        public void Test_Halal_Food()
+        public void Test_Dietary_Rule()
         {
-            var repository = new RuleRepository();
-            repository.Load(x => x.From(typeof(HalalRules).Assembly)); 
-            var factory = repository.Compile();
-            var session = factory.CreateSession();
-            var menuItem = new MenuItemModel(){ itemName = "Falafel Wrap", IsVegan = true, IsHalal = true, IsNonGluten = false };
-            session.Insert(menuItem);
-
+            //Arrange
+                Errors err = new Errors();
+                var repository = new RuleRepository();
+                repository.Load(x => x.From(typeof(DietaryRules).Assembly));
+                var factory = repository.Compile();
+                var session = factory.CreateSession();
+                var menuItem = new MenuItemModel() { itemName = "Falafel Wrap", IsVegan = false, IsHalal = false, IsNonGluten = false };
+                session.Insert(menuItem);
+                session.Insert(err);
+            //Act
+                session.Fire();
+            //Assert
+                Assert.Equal(menuItem.itemName, err.Model.First().itemName);
         }
-        [Fact]
-        public void Test_Vegan_Food()
-        {
-
-        }
-        [Fact]
-        public void Test_NonGluten_Food()
-        {
-
-        }
+       
     }
 }

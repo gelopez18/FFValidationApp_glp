@@ -49,3 +49,5 @@ C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp\bin\Debug\ne
 C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp\bin\Debug\net8.0\NRules.dll
 C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp\bin\Debug\net8.0\Spectre.Console.dll
+C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp\obj\Debug\net8.0\FFValidationApp-glp.sourcelink.json
+C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp\obj\Debug\net8.0\FFValidationApp-glp.csproj.ResolveComReference.cache

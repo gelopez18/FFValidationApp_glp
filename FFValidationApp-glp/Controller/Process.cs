@@ -1,5 +1,4 @@
-﻿using FFValidationApp_glp.Controller.NewFolder;
-using FFValidationApp_glp.Controller.Rules;
+﻿using FFValidationApp_glp.Controller.Rules;
 using FFValidationApp_glp.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

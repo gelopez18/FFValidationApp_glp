@@ -26,22 +26,8 @@ namespace FFValidationApp_glp.Controller
         public string Show()
         {
             CustomerModel customer = (CustomerModel)CustomerModel.CustomerCreation();
-            List<MenuItemModel> menu = DataBase.getMenuData("Items");
-            var table = new Table();
-                table.AddColumn(new TableColumn(new Markup("[green]Item Id[/]")));
-                table.AddColumn(new TableColumn("[white]Item Name[/]"));
-                table.AddColumn(new TableColumn("[white]Item Description[/]"));
-                table.AddColumn(new TableColumn("[white]Item Type[/]"));
-                table.AddColumn(new TableColumn("[white]Item Option[/]"));
-            var rows = new List<Rows>();
-            foreach (var item in menu)
-            {
-                var type = item.IsHalal ? "Halal" : item.IsVegan ? "Vegan" : item.IsNonGluten ? "Gluten Free" : "Regular";
-                table.AddRow(menu.IndexOf(item).ToString(), item.itemName, item.itemDescription, type, item.itemOption.ToString());
-            }            
-            AnsiConsole.Write(table);
-            var picked = HandleMenuPicked(menu);
-            ShowOrderDetails(picked);
+            var picked = HandleMenuPicked(DisplayMenu());
+            var total = ShowOrderDetails(picked);
             var res =  AnsiConsole.Ask<string>("Would you like to proceed?\n[grey](valid input X, B, P)[/]\n");
             if (res.ToUpper() == "X" || res.ToUpper() == "B")
             {
@@ -53,17 +39,27 @@ namespace FFValidationApp_glp.Controller
                 {
                     customerId = customer.customerId,
                     menuItems = picked,
-                };                
-                OrdersController.addOrder(customer, ref order); 
+                    Total = total
+                };
+                if (!OrdersController.addOrder(customer, ref order)) {
+                    return "B";
+                }
+                else
+                {
+                    Payment.ProcessPayment(order);
+                    var rule = new Rule("[red]Order Completed Successfully![/]");
+                    AnsiConsole.Write(rule);
+                    return "B";
+                }
             }
             else
             {
-                _logger.LogError("Please enter a valid input X, B, P");
+                _logger.LogError("Please enter a valid input X - exit, B - go back, P - proceed");
             }                     
             return default;
         }
 
-        private List<MenuItemModel> HandleMenuPicked(List<MenuItemModel> menu)
+        public static List<MenuItemModel> HandleMenuPicked(List<MenuItemModel> menu)
         {
             string res="";
             List<MenuItemModel> listOfItems = new List<MenuItemModel>();
@@ -81,7 +77,7 @@ namespace FFValidationApp_glp.Controller
             } 
             return listOfItems;
         }
-        private void ShowOrderDetails(List<MenuItemModel> picked)
+        private double ShowOrderDetails(List<MenuItemModel> picked)
         {
             var OrderDetails = new Table();
                 OrderDetails.AddColumn(new TableColumn(new Markup("[green]Order Details[/]")));
@@ -94,6 +90,28 @@ namespace FFValidationApp_glp.Controller
             }
                 OrderDetails.AddRow("[red]TOTAL[/]", total.ToString());  
             AnsiConsole.Write(OrderDetails);
+            return total;
+        }
+
+        public static List<MenuItemModel> DisplayMenu()
+        {
+         
+            List<MenuItemModel> menu = DataBase.getMenuData("Items");
+            var table = new Table();
+            table.AddColumn(new TableColumn(new Markup("[green]Item Id[/]")));
+            table.AddColumn(new TableColumn("[white]Item Name[/]"));
+            table.AddColumn(new TableColumn("[white]Item Description[/]"));
+            table.AddColumn(new TableColumn("[white]Item Type[/]"));
+            table.AddColumn(new TableColumn("[white]Item Option[/]"));
+            var rows = new List<Rows>();
+            foreach (var item in menu)
+            {
+                var type = item.IsHalal ? "Halal" : item.IsVegan ? "Vegan" : item.IsNonGluten ? "Gluten Free" : "Regular";
+                table.AddRow(menu.IndexOf(item).ToString(), item.itemName, item.itemDescription, type, item.itemOption.ToString());
+            }
+            AnsiConsole.Write(table);
+
+            return menu;
         }
     }
 }
