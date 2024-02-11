@@ -137,3 +137,4 @@ C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp.Test\obj\Deb
 C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp.Test\obj\Debug\net8.0\FFValidationApp-glp.Test.pdb
 C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp.Test\obj\Debug\net8.0\FFValidationApp-glp.Test.genruntimeconfig.cache
 C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp.Test\obj\Debug\net8.0\ref\FFValidationApp-glp.Test.dll
+C:\Users\gab54\source\repos\FFValidationApp-glp\FFValidationApp-glp.Test\obj\Debug\net8.0\FFValidationApp-glp.Test.sourcelink.json

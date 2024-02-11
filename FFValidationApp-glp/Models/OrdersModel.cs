@@ -17,6 +17,7 @@ namespace FFValidationApp_glp.Models
         public DateTime orderDate { get; set; }
         public List<MenuItemModel> menuItems { get; set; }
         public List<ComboModel> comboItems { get; set; }
+        public double Total {  get; set; }
 
     }
 }

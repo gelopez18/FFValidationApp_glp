@@ -13,6 +13,11 @@ namespace FFValidationApp_glp.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ErrorId{ get; set; }        
-        public MenuItemModel Model { get; set; }
+        public List<MenuItemModel> Model { get; set; } = new List<MenuItemModel>();
+
+        public void AddItem(MenuItemModel item)
+        {
+            Model.Add(item);
+        }
     }
 }
