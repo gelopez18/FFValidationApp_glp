@@ -1,5 +1,6 @@
 using FFValidationApp_glp.Controller.Rules;
 using FFValidationApp_glp.Models;
+using FFValidationApp_glp.Utils;
 using NRules;
 using NRules.Fluent;
 using Xunit.Abstractions;
@@ -24,6 +25,15 @@ namespace FFValidationApp_glp.Test
                 session.Fire();
             //Assert
                 Assert.Equal(menuItem.itemName, err.Model.First().itemName);
+        }
+
+        [Fact]
+        public void Test_Data_Fetch()
+        {
+            //Act
+            var data = DataBase.getMenuData("items");
+            //Assert
+            Assert.NotNull(data);   
         }
        
     }

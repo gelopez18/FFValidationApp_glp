@@ -21,8 +21,5 @@ namespace FFValidationApp_glp.Models
         public bool IsVegan { get; set; } = false;
         public bool IsNonGluten { get; set; } = false;
         public bool IsRegular { get; set; } = false;
-
-        
-
     }
 }

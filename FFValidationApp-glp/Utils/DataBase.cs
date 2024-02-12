@@ -18,7 +18,7 @@ namespace FFValidationApp_glp.Utils
             var MenuItems = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName).FullName);
             StringBuilder path = new StringBuilder()
                 .Append(MenuItems)
-                .Append("\\FFValidationApp-glp.Test\\Data")
+                .Append("\\FFValidationApp-glp\\Utils\\Data")
                 .Append($"\\{typeMenu}");
             dynamic res = type.ToUpper() == "ITEMS" ? JsonConvert.DeserializeObject<List<MenuItemModel>>(File.ReadAllText(path.ToString())) : JsonConvert.DeserializeObject<List<ComboModel>>(File.ReadAllText(path.ToString()));
             return res;

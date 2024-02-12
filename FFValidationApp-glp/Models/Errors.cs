@@ -14,10 +14,14 @@ namespace FFValidationApp_glp.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ErrorId{ get; set; }        
         public List<MenuItemModel> Model { get; set; } = new List<MenuItemModel>();
-
+        public List<ComboModel> ComboModel { get; set; } = new List<ComboModel>();
         public void AddItem(MenuItemModel item)
         {
             Model.Add(item);
+        }
+        public void AddCombo(ComboModel combo)
+        {
+            ComboModel.Add(combo);
         }
     }
 }

@@ -21,22 +21,23 @@ namespace FFValidationApp_glp.Utils
             new TextPrompt<string>("CVV:")
                 .PromptStyle("red")
                 .Secret());
-            var res = SendingDataToBankAsync(order.Total, cc, exp, cvv);            
+            SendingDataToBankAsync(order.Total, cc, exp, cvv);            
         }
 
-        private static async Task SendingDataToBankAsync(double total, string cc, string cvv, string exp)
+        private static void SendingDataToBankAsync(double total, string cc, string exp, string cvv)
         {
-            await AnsiConsole.Progress()
-                 .StartAsync(async ctx =>
-                 {
+            AnsiConsole.Progress()
+                        .Start(ctx =>
+                        {
+                            var task1 = ctx.AddTask("[blue]Processing Payment through the Bank[/]");
+                          
 
-                     var task1 = ctx.AddTask("[blue]Sending Payment Waiting for the bank[/]");                     
-                     while (!ctx.IsFinished)
-                     {
-                         await Task.Delay(300);
-                         task1.Increment(1.5);                        
-                     }
-                 });
+                            for (int i = 0; i < 100; i++)
+                            {
+                                Thread.Sleep(50); 
+                                task1.Increment(1); 
+                            }
+                        });
         }
     }
 }

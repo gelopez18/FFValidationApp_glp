@@ -14,5 +14,10 @@ namespace FFValidationApp_glp.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int comboId { get; set; }
         public List<int> MenuItemId { get; set; }
+        public bool IsHalal { get; set; } = false;
+        public bool IsVegan { get; set; } = false;
+        public bool IsNonGluten { get; set; } = false;
+        public bool IsRegular { get; set; } = false;
+        public double Price {  get; set; }  
     }
 }
