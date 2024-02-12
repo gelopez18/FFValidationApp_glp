@@ -30,34 +30,82 @@ namespace FFValidationApp_glp.Controller
 
         public void Run()
         {
-            var message = "Combo or Single Menu item?\n[grey](valid input 1 or 2 Press X to exit)[/]\n";            
-            var res = AnsiConsole.Ask<string>(message);
-            while (res != "X" || res != "x" || res != "B" || res != "b")
+            var close = "";
+            while (close.ToLower() != "x")
             {
-                switch (res)
+                CustomerModel customer = (CustomerModel)CustomerModel.CustomerCreation();
+                OrdersModel order = new OrdersModel()
                 {
-                    case "1":
-                       res = Combo.Show();
-                        break;
-                    case "2":
-                        res = Menu.Show();
-                        break;
-                    default:
-                        _logger.LogError("Please enter a valid input: (1 or 2)");
-                        break;
-                }
-                if (res == "X" || res == "x")
+                    customerId = customer.customerId
+                };
+                bool keepOrdering;
+                var message = "Combo or Single Menu item?\n[grey](valid input 1 or 2 Press X to exit)[/]\n";
+                var res = AnsiConsole.Ask<string>(message);
+                while (res.ToLower() != "z" || res.ToLower() != "x" || res.ToLower() != "b")
                 {
-                    break;
+                    switch (res)
+                    {
+                        case "1":
+                            order.comboItems = Combo.Show(customer, order, out keepOrdering);
+                            if (keepOrdering)
+                            {
+                                order.menuItems = Menu.Show(customer, order, out keepOrdering);
+                                if (!keepOrdering)
+                                {
+                                    res = OrdersController.processOrders(_logger, customer, order, Menu.ShowOrderDetails(order), keepOrdering);
+                                }
+                                else
+                                {
+                                    res = "1";
+                                }
+                            }
+                            else
+                            {
+                                res = OrdersController.processOrders(_logger, customer, order, Menu.ShowOrderDetails(order), keepOrdering);
+                            }
+                            break;
+                        case "2":
+
+                            order.menuItems = Menu.Show(customer, order, out keepOrdering);
+                            if (keepOrdering)
+                            {
+                                order.comboItems = Combo.Show(customer, order, out keepOrdering);
+                                if (!keepOrdering)
+                                {
+                                    res = OrdersController.processOrders(_logger, customer, order, Menu.ShowOrderDetails(order), keepOrdering);
+                                }
+                                else
+                                {
+                                    res = "2";
+                                }
+                            }
+                            else
+                            {
+                                res = OrdersController.processOrders(_logger, customer, order, Menu.ShowOrderDetails(order), keepOrdering);
+                            }
+                            break;
+                        default:
+                            _logger.LogError("Please enter a valid input: (1 or 2)");
+                            break;
+                    }
+                    if (res.ToLower() == "x" || res.ToLower() == "z")
+                    {
+                        close = res.ToLower() == "x" ? "x" : "z";
+                        break;
+                    }
+                    if (res.ToUpper() == "B" || res == "1" || res == "2")
+                    {
+                        res = AnsiConsole.Ask<string>(message);
+                    }
                 }
-                if (res == "B" || res == "b")
-                {
-                    AnsiConsole.Ask<string>(message);
-                }
-                res = Console.ReadLine();
             }
+
+
             
+
         }
+
+        
 
       
     }

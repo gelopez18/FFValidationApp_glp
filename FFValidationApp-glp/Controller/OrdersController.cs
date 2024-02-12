@@ -1,6 +1,7 @@
 ﻿
 using FFValidationApp_glp.Controller.Rules;
 using FFValidationApp_glp.Models;
+using FFValidationApp_glp.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NRules;
@@ -25,22 +26,50 @@ namespace FFValidationApp_glp.Controller
             _config = config;
             _logger = loggerFact.CreateLogger<OrdersController>();
         }
-        public static bool addOrder(CustomerModel customer, ref OrdersModel order)
+        public static bool addOrder(CustomerModel customer, ref OrdersModel order, bool keepOrdering)
         {
+            bool temp = true;
             Errors errors = new Errors();
-            foreach (var items in order.menuItems)
-            {                
-                ValidateMenuItems(items,ref errors);
-            }
-            RemoveItems(ref errors, ref order);
-            if (order.menuItems.Count()==0)
+            if (order.menuItems != null)
             {
-                return false;
+                foreach (var items in order.menuItems)
+                {
+                    ValidateMenuItems(items, ref errors);
+                }
+                if (errors.Model != null)
+                {
+                    RemoveItems(ref errors, ref order, keepOrdering);
+                }
+                if (order.menuItems.Count()==0)
+                {
+                    temp = false;
+                }
+                else
+                {
+                    temp = true;
+                }
             }
-            else
+            if (order.comboItems != null)
             {
-                return true;
+                foreach (var combo in order.comboItems)
+                {
+                    ValidateMenuItems(combo, ref errors);
+                }
+                if (errors.ComboModel != null)
+                {
+                    RemoveCombo(ref errors, ref order, keepOrdering);
+                }
+
+                if (order.comboItems.Count() == 0 && temp == false || (order.comboItems.Count() == 0 &&  order.menuItems == null))
+                {
+                    temp = false;
+                }
+                else
+                {
+                    temp = true;
+                }
             }
+            return temp;
         }
  
         private static void ValidateMenuItems(MenuItemModel item, ref Errors errors)
@@ -53,23 +82,50 @@ namespace FFValidationApp_glp.Controller
                 session.Insert(errors);
             session.Fire();  
         }
-        private static void handleCustomerFinalDecision(MenuItemModel item, ref Errors errors, ref OrdersModel orders)
+        private static void ValidateMenuItems(ComboModel item, ref Errors errors)
         {
-            if (AnsiConsole.Confirm($"Would the customer Like to remove the item?"))
-            {
+            var repository = new RuleRepository();
+            repository.Load(x => x.From(typeof(ComboDietaryRule).Assembly));
+            var factory = repository.Compile();
+            var session = factory.CreateSession();
+            session.Insert(item);
+            session.Insert(errors);
+            session.Fire();
+        }
+        private static void handleCustomerFinalDecision(MenuItemModel item, ref Errors errors, ref OrdersModel orders, bool keepOrdering)
+        {            
                 orders.menuItems.Remove(item);
                 if (AnsiConsole.Confirm($"Would the customer Like to pick something else?"))
                 {
-                    List<MenuItemModel> picked = MenuController.HandleMenuPicked(MenuController.DisplayMenu());
+                    if (AnsiConsole.Confirm($"From the Item Menu?"))
+                    {
+                        List<MenuItemModel> picked = MenuController.HandleMenuPicked(MenuController.DisplayMenu(), out keepOrdering);
+                        foreach (var i in picked)
+                        {
+                            orders.menuItems.Add(i);
+                        }
+                    }
+                    
+                }                                        
+        }
+        private static void handleCustomerFinalDecision(ComboModel item, ref Errors errors, ref OrdersModel orders, bool keepOrdering)
+        {
+            orders.comboItems.Remove(item);
+            if (AnsiConsole.Confirm($"Would the customer Like to pick something else?"))
+            {
+                if (AnsiConsole.Confirm($"From the Combo Menu?"))
+                {
+                    List<MenuItemModel> picked = MenuController.HandleMenuPicked(MenuController.DisplayMenu(), out keepOrdering);
                     foreach (var i in picked)
                     {
                         orders.menuItems.Add(i);
                     }
-                }                
-            }            
+                }
+
+            }
         }
 
-        private static void RemoveItems(ref Errors errors, ref OrdersModel order)
+        private static void RemoveItems(ref Errors errors, ref OrdersModel order, bool keepOrdering)
         {
             
             if (errors.Model.Any())
@@ -80,17 +136,67 @@ namespace FFValidationApp_glp.Controller
                     var Vegan = !result.IsVegan ? "Not Vegan" : "Vegan";
                     var Gluten = result.IsNonGluten ? "Gluten free" : "Contains Gluten";
 
-                    if (AnsiConsole.Confirm($"is the customer Aware [red]{result.itemName}[/] is [yellow]{Halal}[/], [yellow]{Vegan}[/] and [yellow]{Gluten}[/]?"))
+                    if (AnsiConsole.Confirm($"is the customer Aware [red]{result.itemName}[/] is [yellow]{Halal}[/], [yellow]{Vegan}[/] and [yellow]{Gluten}[/]\nWould the customer Like to remove the item?"))
                     {
-                        handleCustomerFinalDecision(result, ref errors, ref order);
+                        handleCustomerFinalDecision(result, ref errors, ref order, keepOrdering);
                     }
-                    else
+                    
+                }
+            }
+            
+        }
+        private static void RemoveCombo(ref Errors errors, ref OrdersModel order, bool keepOrdering)
+        {
+            List<MenuItemModel> menuData = DataBase.getMenuData("Items");
+            if (errors.ComboModel.Any())
+            {
+                foreach (var c in errors.ComboModel)
+                {
+                    StringBuilder result = new StringBuilder();
+                    foreach (var item in c.MenuItemId)
                     {
-                        handleCustomerFinalDecision(result, ref errors, ref order);
+                        result.Append(menuData.Where(d => d.itemId.Equals(item)).First().itemName + " and ");
                     }
+
+                    var Halal = !c.IsHalal ? "Non-Halal" : "Halal";
+                    var Vegan = !c.IsVegan ? "Not Vegan" : "Vegan";
+                    var Gluten = c.IsNonGluten ? "Gluten free" : "Contains Gluten";
+
+                    if (AnsiConsole.Confirm($"is the customer Aware [red]{result.ToString().Remove(result.Length - 5)}[/] is [yellow]{Halal}[/], [yellow]{Vegan}[/] and [yellow]{Gluten}[/]\nWould the customer Like to remove the item?"))
+                    {
+                        handleCustomerFinalDecision(c, ref errors, ref order, keepOrdering);
+                    }
+
                 }
             }
         }
-
+        public static string processOrders(ILogger logger, CustomerModel customer, OrdersModel order, double total, bool keepOdering)
+        {
+            var res = AnsiConsole.Ask<string>("Would you like to proceed?\n[grey](valid input X -Exit, B -Back, P -Process)[/]\n");
+            if (res.ToUpper() == "X" || res.ToUpper() == "B")
+            {
+                return res;
+            }
+            else if (res.ToUpper() == "P")
+            {
+                
+                if (!OrdersController.addOrder(customer, ref order, keepOdering))
+                {
+                    return "1";
+                }
+                else
+                {
+                    Payment.ProcessPayment(order);
+                    var rule = new Rule("[Green]Order Completed Successfully![/]");
+                    AnsiConsole.Write(rule);
+                    return "z";
+                }
+            }
+            else
+            {
+                logger.LogError("Please enter a valid input X - exit, B - go back, P - proceed");
+            }
+            return default;
+        }
     }
 }

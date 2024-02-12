@@ -27,4 +27,11 @@
     <PackageReference Include="Spectre.Console" Version="0.48.1-preview.0.20" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update=".gitignore">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
 </Project>

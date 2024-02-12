@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FFValidationApp-glp.Test")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+98ecc8f9fc72a7d9675e9160d33a29fa8daec0ea")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d3c05a3cb503486f6f8dd091b196f06c7152143b")]
 [assembly: System.Reflection.AssemblyProductAttribute("FFValidationApp-glp.Test")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FFValidationApp-glp.Test")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

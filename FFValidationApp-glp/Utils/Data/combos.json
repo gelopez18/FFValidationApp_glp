@@ -1,0 +1,74 @@
+[
+  {
+    "comboId": 1,
+    "MenuItemId": [
+      1,
+      5
+    ],
+    "IsHalal": false,
+    "IsVegan": true,
+    "IsRegular": false,
+    "IsNonGluten": false,
+    "Price": 20.5
+  },
+  {
+    "comboId": 2,
+    "MenuItemId": [
+      4,
+      6
+    ],
+    "IsHalal": false,
+    "IsVegan": false,
+    "IsRegular": true,
+    "IsNonGluten": false,
+    "Price": 25.5
+  },
+  {
+    "comboId": 4,
+    "MenuItemId": [
+      1,
+      6
+    ],
+    "IsHalal": false,
+    "IsVegan": true,
+    "IsRegular": true,
+    "IsNonGluten": false,
+    "Price": 15.5
+  },
+  {
+    "comboId": 5,
+    "MenuItemId": [
+      3,
+      5
+    ],
+    "IsHalal": false,
+    "IsVegan": true,
+    "IsRegular": false,
+    "IsNonGluten": true,
+    "Price": 18.5
+  },
+  {
+    "comboId": 6,
+    "MenuItemId": [
+      2,
+      3
+    ],
+    "IsHalal": true,
+    "IsVegan": true,
+    "IsRegular": false,
+    "IsNonGluten": true,
+    "Price": 16.5
+  },
+  {
+    "comboId": 7,
+    "MenuItemId": [
+      2,
+      6
+    ],
+    "IsHalal": true,
+    "IsVegan": true,
+    "IsRegular": false,
+    "IsNonGluten": false,
+    "Price": 20.5
+  }
+]

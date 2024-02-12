@@ -18,77 +18,63 @@ namespace FFValidationApp_glp.Controller
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _config;
+
         public MenuController(ILogger logger, IConfiguration config)
         {
                 _logger = logger;
                 _config = config;
+           
         }
-        public string Show()
-        {
-            CustomerModel customer = (CustomerModel)CustomerModel.CustomerCreation();
-            var picked = HandleMenuPicked(DisplayMenu());
-            var total = ShowOrderDetails(picked);
-            var res =  AnsiConsole.Ask<string>("Would you like to proceed?\n[grey](valid input X, B, P)[/]\n");
-            if (res.ToUpper() == "X" || res.ToUpper() == "B")
-            {
-                return res;
-            }          
-            else if(res.ToUpper()=="P")
-            {
-                OrdersModel order = new OrdersModel()
-                {
-                    customerId = customer.customerId,
-                    menuItems = picked,
-                    Total = total
-                };
-                if (!OrdersController.addOrder(customer, ref order)) {
-                    return "B";
-                }
-                else
-                {
-                    Payment.ProcessPayment(order);
-                    var rule = new Rule("[red]Order Completed Successfully![/]");
-                    AnsiConsole.Write(rule);
-                    return "B";
-                }
-            }
-            else
-            {
-                _logger.LogError("Please enter a valid input X - exit, B - go back, P - proceed");
-            }                     
-            return default;
+        public List<MenuItemModel> Show(CustomerModel customer, OrdersModel order, out bool KeepOrdering)
+        {            
+            List<MenuItemModel> picked = HandleMenuPicked(DisplayMenu(), out KeepOrdering);
+            if (order.menuItems != null) { foreach (var item in order.menuItems) { picked.Add(item); } }           
+            return picked;                    
         }
-
-        public static List<MenuItemModel> HandleMenuPicked(List<MenuItemModel> menu)
+        public static List<MenuItemModel> HandleMenuPicked(List<MenuItemModel> menu, out bool keepOrdering)
         {
             string res="";
             List<MenuItemModel> listOfItems = new List<MenuItemModel>();
-            while (res != "d" && res != "D")
+            while (res != "d" && res != "c")
             {
                 List<string> itemsName = menu.Select(item => item.itemName).ToList();                
                 var menuPick = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .Title("Please Choose an item from the[green] Menu[/]?")
                 .PageSize(10)
-                .MoreChoicesText("[grey](Move up and down to reveal more fruits)[/]")
+                .MoreChoicesText("[grey](Move up and down to reveal more Items[/]")
                 .AddChoices(itemsName));
                 listOfItems.Add(menu.Where(i => i.itemName.Equals(menuPick, StringComparison.OrdinalIgnoreCase)).First());
-                res = AnsiConsole.Confirm($"[yellow]{menuPick} has been added to the list[/].\nWould you like to add another item?") ? res ="": res="d";
-            } 
+                res = AnsiConsole.Confirm($"[yellow]{menuPick} has been added to the list[/].\nWould you like to add another item?") ? AnsiConsole.Confirm($"From the Item Menu?") ? res = "" : res = "c" : res = "d";               
+            }
+            keepOrdering = res.ToLower() == "c" ? true : false;
+
             return listOfItems;
         }
-        private double ShowOrderDetails(List<MenuItemModel> picked)
+        public double ShowOrderDetails(OrdersModel order)
         {
             var OrderDetails = new Table();
                 OrderDetails.AddColumn(new TableColumn(new Markup("[green]Order Details[/]")));
                 OrderDetails.AddColumn(new TableColumn(new Markup("[red3]Price[/]")));
             double total = 0.0;
-            foreach (var item in picked)
+            if (order.menuItems != null)
             {
-                OrderDetails.AddRow(item.itemName, item.itemPrice.ToString());
-                total += item.itemPrice;    
+                foreach (var item in order.menuItems)
+                {
+                    OrderDetails.AddRow(item.itemName, item.itemPrice.ToString());
+                    total += item.itemPrice;
+                }
             }
-                OrderDetails.AddRow("[red]TOTAL[/]", total.ToString());  
+            if (order.comboItems != null)
+            {
+                foreach (var combo in order.comboItems)
+                {
+                    OrderDetails.AddRow(combo.comboId.ToString(), combo.Price.ToString());
+                    total += combo.Price;
+                }
+            }            
+                order.Total = total;
+                OrderDetails.AddRow("[red]TOTAL[/]", order.Total.ToString());  
             AnsiConsole.Write(OrderDetails);
             return total;
         }
@@ -103,7 +89,7 @@ namespace FFValidationApp_glp.Controller
             table.AddColumn(new TableColumn("[white]Item Description[/]"));
             table.AddColumn(new TableColumn("[white]Item Type[/]"));
             table.AddColumn(new TableColumn("[white]Item Option[/]"));
-            var rows = new List<Rows>();
+
             foreach (var item in menu)
             {
                 var type = item.IsHalal ? "Halal" : item.IsVegan ? "Vegan" : item.IsNonGluten ? "Gluten Free" : "Regular";
